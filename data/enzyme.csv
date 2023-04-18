@@ -1,0 +1,6 @@
+species,seq_regex,cut_3end,cut_5end
+RNase,T1,G*,P(1)O(4)H(2),O(1)H(1)
+RNase,A,C*|U*,P(1)O(4)H(2),O(1)H(1)
+RNase,PhyM,A*,P(1)O(4)H(2),O(1)H(1)
+RNase,MC1,A*U|C*U|U*U,P(1)O(4)H(2),O(1)H(1)
+RNase,MazF,*ACA,P(1)O(4)H(2),O(1)H(1)
