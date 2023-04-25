@@ -54,9 +54,9 @@ def cal_mass_by_formula(elems, formula):
             while j < len(formula) and formula[j].isdigit():
                 j += 1
             ele_name = formula[i:j]
-            print(ele_name)
+
             k = j + 1
-            while k < len(formula) and formula[k].isdigit():
+            while k < len(formula) and formula[k] != ')':
                 k += 1
             a = formula[j + 1:k]
             count = float(a)
@@ -67,7 +67,7 @@ def cal_mass_by_formula(elems, formula):
             i = k
         else:
             i += 1
-
+    print('{} : {}'.format(formula, mass))
     return mass
 
 

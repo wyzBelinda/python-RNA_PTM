@@ -2,22 +2,22 @@ import pandas as pd
 
 
 class Modification:
-    def __init__(self, name, symbol, origin, nucleotide, base, delta_mass_1, sugar, delta_mass_2, phosphate,
-                 delta_mass_3):
+    def __init__(self, name, symbol, origin, nucleotide, base, base_delta_mass, sugar, sugar_delta_mass, phosphate,
+                 phosphate_delta_mass):
         self.name = name
         self.symbol = symbol
         self.origin = origin
         self.nucleotide = nucleotide
         self.base = base
-        self.delta_mass_1 = delta_mass_1
+        self.base_delta_mass = base_delta_mass
         self.sugar = sugar
-        self.delta_mass_2 = delta_mass_2
+        self.sugar_delta_mass = sugar_delta_mass
         self.phosphate = phosphate
-        self.delta_mass_3 = delta_mass_3
+        self.phosphate_delta_mass = phosphate_delta_mass
 
 
 def create_modifications_from_table(table):
-    mods = []
+    mods = {}
     for _, row in table.iterrows():
         mod = Modification(
             name=row['Name'],
@@ -25,14 +25,30 @@ def create_modifications_from_table(table):
             origin=row['origin'],
             nucleotide=row['nucleotide'],
             base=row['Base'],
-            delta_mass_1=row['delta_mass'],
+            base_delta_mass=row['delta_mass'],
             sugar=row['sugar'],
-            delta_mass_2=row['delta_mass.1'],
+            sugar_delta_mass=row['delta_mass.1'],
             phosphate=row['phosphate'],
-            delta_mass_3=row['delta_mass.2']
+            phosphate_delta_mass=row['delta_mass.2']
         )
-        mods.append(mod)
+        mods[row['Symbol']] = mod
     return mods
+
+
+def get_known_mod(known_mod_path):
+    df = pd.read_csv(known_mod_path, delimiter=' ')
+    known_mod_data = []
+    for _, row in df.iterrows():
+        known_mod_data.append({
+            'Molecule': row['Molecule'],
+            'Position': row['Position'],
+            'ID': row['ID'],
+            'ID_ext': row['ID_ext'],
+            'Include': row['Include']
+        })
+
+    print(known_mod_data)
+    return known_mod_data
 
 
 if __name__ == '__main__':
@@ -43,4 +59,4 @@ if __name__ == '__main__':
     mods = create_modifications_from_table(df)
 
     # 打印 nucleotide 对象列表中第一个对象的名字和符号
-    print(mods[0].name, mods[0].symbol)
+    print(mods['Ap'].name, mods['Ap'].symbol)

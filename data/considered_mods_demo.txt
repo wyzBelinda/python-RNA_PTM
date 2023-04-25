@@ -1,0 +1,9 @@
+Molecule Position ID ID_ext Include
+my_07_CID 2 K Cp 1
+my_10_CID 4 Y mchm5Ump 1
+calibration_oligo_47 5 l Up 1
+calibration_oligo_48 3 j m6A 1
+calibration_oligo_63 6 k Cp 1
+calibration_oligo_79 11 i Am 1
+calibration_oligo_92 2 j m6A 1
+calibration_oligo_93 12 i Am 1
