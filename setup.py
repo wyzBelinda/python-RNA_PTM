@@ -2,7 +2,7 @@ from distutils.core import setup
 from setuptools import setup, find_packages
 
 setup(
-    name='example',
+    name='src',
     version='0.1dev0',
     author='WU Yuzhuo',
     author_email='wyzbelinda@gmail.com',

@@ -521,7 +521,7 @@ class DictionaryBuilder:
         # update = config.updatefolder
 
         update = os.getcwd()
-        with open(os.path.join(update, "../../example/package_2/Restriction_Dictionary.py"), "w") as results:
+        with open(os.path.join(update, "../../src/flow/Restriction_Dictionary.py"), "w") as results:
             print("Writing the dictionary containing the new Restriction classes...")
             results.write(start)
             results.write("rest_dict = {}\n")
@@ -577,14 +577,14 @@ class DictionaryBuilder:
         #
         #   first save the old file in Updates
         #
-        old = os.path.join(os.path.split(rd.__file__)[0], "../../example/package_2/Restriction_Dictionary.py")
+        old = os.path.join(os.path.split(rd.__file__)[0], "../../src/flow/Restriction_Dictionary.py")
         # update_folder = config.updatefolder
         update_folder = os.getcwd()
-        shutil.copyfile(old, os.path.join(update_folder, "../../example/package_2/Restriction_Dictionary.old"))
+        shutil.copyfile(old, os.path.join(update_folder, "../../src/flow/Restriction_Dictionary.old"))
         #
         #   Now test and install.
         #
-        new = os.path.join(update_folder, "../../example/package_2/Restriction_Dictionary.py")
+        new = os.path.join(update_folder, "../../src/flow/Restriction_Dictionary.py")
         try:
             exec(compile(open(new).read(), new, "exec"))
             print("\n\tThe new file seems ok. Proceeding with the installation.")
@@ -622,9 +622,9 @@ class DictionaryBuilder:
         #
         #   first save the old file in Updates
         #
-        old = os.path.join(os.path.split(rd.__file__)[0], "../../example/package_2/Restriction_Dictionary.py")
+        old = os.path.join(os.path.split(rd.__file__)[0], "../../src/flow/Restriction_Dictionary.py")
         update = os.getcwd()
-        shutil.copyfile(old, os.path.join(update, "../../example/package_2/Restriction_Dictionary.old"))
+        shutil.copyfile(old, os.path.join(update, "../../src/flow/Restriction_Dictionary.old"))
         places = update, os.path.split(Bio.Restriction.Restriction.__file__)[0]
         print(
             "\t\tCompilation of the new dictionary : OK."
