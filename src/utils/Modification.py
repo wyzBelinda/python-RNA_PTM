@@ -51,6 +51,17 @@ def get_known_mod(known_mod_path):
     return known_mod_data
 
 
+def cal_mods_mass(mods, elements):
+    from src.utils.Element import cal_mass_by_formula
+
+    for mod in mods:
+        mods[mod].base_delta_mass = cal_mass_by_formula(elements, mods[mod].base)
+        mods[mod].sugar_delta_mass = cal_mass_by_formula(elements, mods[mod].sugar)
+        mods[mod].phosphate_delta_mass = cal_mass_by_formula(elements, mods[mod].phosphate)
+
+    return mods
+
+
 if __name__ == '__main__':
     # 读入表格
     df = pd.read_csv('data/mods.csv')

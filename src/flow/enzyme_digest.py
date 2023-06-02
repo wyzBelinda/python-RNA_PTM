@@ -155,11 +155,13 @@ def nonspecific(rna, enzymes_h, args, is_decoy=False):
     max_len = int(args["max_oligo_length"])
 
     oligos = []
-    for i in range(min_len, max_len):
-        if i <= len(seq):
-            for pos in range(len(seq) - i):
-                seq_to_add = seq[pos: pos + i + 1]
+    for oli_len in range(min_len, max_len):
+        if oli_len <= len(seq):
+            for pos in range(len(seq) - oli_len + 1):
+                seq_to_add = seq[pos: pos + oli_len]
                 # print(seq_to_add))
+
+
                 oligo = Oligo(
                     sequence=seq_to_add,
                     miss=[0],
@@ -167,7 +169,7 @@ def nonspecific(rna, enzymes_h, args, is_decoy=False):
                     chemistry_3=args["random_cut_end5"],
                     sequence_location=[{'molecule': rna[0],
                                         'residue_start': pos,
-                                        'residue_end': pos + i,
+                                        'residue_end': pos + oli_len,
                                         'enzyme_name_start': "non_random",
                                         'enzyme_name_end': "non_random",
                                         'miss': 0,
@@ -190,14 +192,16 @@ def shrink_oligos(oligos: List[Oligo]):
     new_list: List[Oligo] = []
     seen_values: list = []
 
-    for i in range(len(oligos)):
-        oligo = oligos[i][0]
-        print(oligo)
+    for oligo in oligos:
+        value = (oligo.chemistry_5, oligo.mod, oligo.chemistry_3)
+        reversed_value = (oligo.chemistry_3, list(reversed(oligo.mod)), oligo.chemistry_5)
+        if value in seen_values:
+            index = seen_values.index(value)
 
-        value = (oligo.sequence, oligo.chemistry_5, oligo.chemistry_3, oligo.sequence_location[0]['mod_infos'])
-        index = seen_values.index(value)
-        if index != -1:
-            new_list[index].sequence_location.append(oligo.sequence_location)
+            new_list[index].sequence_location.extend(oligo.sequence_location)
+        elif reversed_value in seen_values:
+            index1 = seen_values.index(reversed_value)
+            new_list[index1].sequence_location.extend(oligo.sequence_location)
         else:
             new_list.append(oligo)
             seen_values.append(value)

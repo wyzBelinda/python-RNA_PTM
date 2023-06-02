@@ -15,7 +15,7 @@ def tda_fdr_test(osm_results: List[OSM], fdr_threshold):
     n_decoy = 0
     osm_results.sort(key=lambda x: x.matched_score, reverse=True)
     for result in osm_results:
-        if any(d['is_decoy'] is False for d in result.oligo.sequence_location):
+        if len([d for d in result.oligo.sequence_location if d['is_decoy'] is False]) != 0:
             n_target += 1
         else:
             n_decoy += 1

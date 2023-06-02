@@ -1,11 +1,13 @@
+from typing import List
+
 from src.utils.Modification import get_known_mod
+from src.utils.Oligo import Oligo
 
 
 def find_mod_poses(oligo, known_mods):
     mods_poses = []
     # [{'mod_index': 0,  'mod_name': "seq_start"}]
     for mod in known_mods:
-        known_mods[mod]
         index = -1
         for cut_info in known_mods[mod].cut_list:
             # while True:
@@ -19,34 +21,72 @@ def find_mod_poses(oligo, known_mods):
     return cut_poses
 
 
-def find_mods(known_mod, all_oligos):
-    for known_m in known_mod:
-        for i, oligo in enumerate(all_oligos):
-            for loca in oligo.sequence_location:
-                if loca['residue_start'] <= known_m['Position'] <= loca['residue_end'] \
-                        and known_m['Molecule'] == loca['molecule']:
-                    # Implement only the modified line if modification is not requested, deleting the
-                    # non-modified entry line
-                    # if known_m['Include'] == 1:
-                    mod_info = {'pos': known_m['Position'] - loca['residue_start'],
-                                'mod_symbol': known_m['ID_ext']}
-                    s = list(oligo.sequence)
-                    if "@" in oligo.mod:
+def find_mods(known_mod: list, all_oligos: List[Oligo]):
+    known_mod.sort(key=lambda x: x['Position'])
+    # known_mod.sort(key=lambda x: x['Molecule'])
+    mods_sets = {}
+    for i, oligo in enumerate(all_oligos):
+        indices = [index for index, known_m in enumerate(known_mod) if
+                   oligo.sequence_location[0]['residue_start'] <= known_m['Position'] <= oligo.sequence_location[0][
+                       'residue_end'] and known_m['Molecule'] == oligo.sequence_location[0]['molecule']]
 
-                        s.insert(mod_info['pos'], mod_info['mod_symbol'])
-                        # s.insert(known_m['Position'] - loca['residue_start'], known_m['ID_ext'])
-                        # s.insert(known_m['Position'] - loca['residue_start'], '[' + known_m['ID_ext'] + ']')
+        s = list(oligo.sequence)
+        pre_len = 0
+        for mod_index in indices:
+            known_m = known_mod[mod_index]
+            if known_m['ID_ext'] not in mods_sets:
+                mods_sets[known_m['ID_ext']] = str(len(mods_sets) % 10) * int(1 + len(mods_sets) / 10)
 
-                        oligo.mod = ''.join(s) + "@" * oligo.mod.count('@') + "@"
-                        loca['mod_infos'].append(mod_info)
-                    else:
-                        s.insert(mod_info['pos'], mod_info['mod_symbol'])
-                        # s.insert(known_m['Position'] - loca['residue_start'], known_m['ID_ext'])
-                        # s.insert(known_m['Position'] - loca['residue_start'], '[' + known_m['ID_ext'] + ']')
-                        oligo.mod = oligo.mod + " " + "".join(s) + "@"
-                        loca['mod_infos'].append(mod_info)
-            print(oligo.to_string())
+            p = known_m['Position'] - oligo.sequence_location[0]['residue_start']
+            if p >= len(oligo.sequence):
+                continue
+            mod_info = {'pos': p,
+                        'mod_symbol': known_m['ID_ext'],
+                        'mod_id': known_m['ID_ext']}
+            s.insert(mod_info['pos'] + pre_len, mods_sets[known_m['ID_ext']])
+            pre_len += len(mod_info['mod_id'])
+            oligo.sequence_location[0]['mod_infos'].append(mod_info)
+        oligo.mod = s
+        # print(oligo.mod)
+        print(oligo.to_string())
+    print(mods_sets)
     return all_oligos
+
+    # for known_m in known_mod:
+    #     for i, oligo in enumerate(all_oligos):
+    #         for loca in oligo.sequence_location:
+    #             if loca['residue_start'] <= known_m['Position'] <= loca['residue_end'] \
+    #                     and known_m['Molecule'] == loca['molecule']:
+    #                 # TODO: 后续修饰标识需要改为回文性质字符。如：
+    #                 #   对每一种不同的修饰设置回文id（如str(count%10)*(count/10)，其中count为不同
+    #                 if known_m['ID_ext'] not in mods_sets:
+    #                     mods_sets[known_m['ID_ext']] = str(len(mods_sets) % 10) * int(
+    #                         len(mods_sets) / 10)
+    #                 # Implement only the modified line if modification is not requested, deleting the
+    #                 # non-modified entry line
+    #                 # if known_m['Include'] == 1:
+    #                 mod_info = {'pos': known_m['Position'] - loca['residue_start'],
+    #                             'mod_symbol': known_m['ID_ext'],
+    #                             'mod_id': known_m['ID_ext']}
+    #                 s = list(oligo.sequence)
+    #                 if "@" in oligo.mod:
+    #
+    #                     s.insert(mod_info['pos'], mod_info['mod_id'])
+    #                     # s.insert(known_m['Position'] - loca['residue_start'], known_m['ID_ext'])
+    #                     # s.insert(known_m['Position'] - loca['residue_start'], '[' + known_m['ID_ext'] + ']')
+    #
+    #                     oligo.mod = ''.join(s) + "@" * oligo.mod.count('@') + "@"
+    #                     loca['mod_infos'].append(mod_info)
+    #                 else:
+    #                     s.insert(mod_info['pos'], mod_info['mod_id'])
+    #                     # s.insert(known_m['Position'] - loca['residue_start'], known_m['ID_ext'])
+    #                     # s.insert(known_m['Position'] - loca['residue_start'], '[' + known_m['ID_ext'] + ']')
+    #                     oligo.mod = oligo.mod + " " + "".join(s) + "@"
+    #                     loca['mod_infos'].append(mod_info)
+    #         print(oligo.to_string())
+    #
+    # return all_oligos
+
 
 def mod_0_1_2_mode(known_mod_path, mods, all_oligos):
     """
@@ -62,11 +102,14 @@ def mod_0_1_2_mode(known_mod_path, mods, all_oligos):
                 # Check if the modification is "on" (1 or 2 from the modification file)
                 if int(modline.split()[-1]) > 0:
                     mod_lines, positions, del_lines = [], [], []
+                    mods_sets = {}
 
                     for i, oligo in enumerate(all_oligos):
                         for loca in oligo.sequence_location:
                             if loca['residue_start'] <= int(modline.split()[1]) <= loca['residue_end'] \
                                     and modline.split()[0] == loca['molecule']:
+                                # TODO: 后续修饰标识需要改为回文性质字符。如：
+                                #   对每一种不同的修饰设置回文id（如str(count%10)*(count/10)，其中count为不同
                                 # Implement only the modified line if modification is not requested, deleting the
                                 # non-modified entry line
                                 if modline.split()[-1] == "1":

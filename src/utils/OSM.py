@@ -10,4 +10,4 @@ class OSM:
         self.tda_fdr = tda_fdr
 
     def to_string(self) -> str:
-        return f"{self.matched_score} {self.oligo.sequence} {self.oligo.mass} {self.spectrum['params']['pepmass'][0]} {self.tda_fdr} {self.oligo.sequence_location[0]['is_decoy']}"
+        return f"{self.matched_score} {self.oligo.sequence} {self.oligo.mass} {self.spectrum['params']['title']} {self.spectrum['params']['pepmass'][0]} {self.tda_fdr} {self.oligo.sequence_location[0]['is_decoy']}"

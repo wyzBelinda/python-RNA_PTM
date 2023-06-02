@@ -6,8 +6,8 @@ from matplotlib import pyplot as plt
 
 from src.RNA_PTM import flows_continuing
 
-param_grid = {'bm25_k': np.arange(0.9, 2.1, 0.1).tolist(),
-              'bm25_t': np.arange(0.9, 2.1, 0.1).tolist()}
+param_grid = {'bm25_k': np.arange(0, 1.1, 0.1).tolist(),
+              'bm25_t': np.arange(0, 1.1, 0.1).tolist()}
 
 
 def my_func(x, y):
